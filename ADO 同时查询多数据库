@@ -1,0 +1,20 @@
+Sub 同时查询多数据库()
+  Dim cnn As New ADODB.Connection
+  Dim rs AS ADODN.Recordset
+  Dim sql As string
+  With cnn
+    .Provider = "microsoft.ace.oledb.12.0;" & "extened properties=excel 12.0"
+    .Open ThisWorkbook.FullName
+  End With
+  sql = "select count(*) from [部门$A:A] a left join "& _
+  "[database=" &ThisWorkbook.Path  & 
+  "\员工.accdb;" & "].职工 b on a.部门=b.部门 group by a.部门"
+  '[F:\vba\sql初级\员工.accdb].职工
+  set rs = cnn.Execute(sql)
+  Sheets("部门").Range("B2").CopyFromRecordset rs
+  
+  rs.Close
+  cnn.Close
+  Set rs = Nothing
+  Set cnn = Nothing
+End Sub
