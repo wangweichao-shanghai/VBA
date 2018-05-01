@@ -20,3 +20,37 @@ Sub    ADO操作数据库的一般步骤()
   cnn.Close                 '关闭链接
   Set cnn = Nothing         '清空cnn变量
 End Sub
+
+
+Sub    将查询记录返回到工作表()
+'1、定义、创建连接变量
+Dim con As New ADODB.Connection
+'2、建立数据库连接
+con.Open "provider=microsoft.ace.oledb.12.0;data source=" & _
+ThisWorkbook.Path & "\员工.accdb"
+'3、查询记录
+Dim sql As String
+sql = "select * from 职工"
+Dim rs As New ADODB.Recordset  '创建记录对象
+'Dim rs As ADODB.Recordset
+'Set rs = New ADODB.Recordset
+'执行SQL命令之后，提取到的数据会被加载到内存中
+Set rs = con.Execute(sql)     '将记录集存到rs中
+'获取字段名，使用循环
+Dim i As Integer
+For i = 0 To rs.Fields.Count - 1
+    Cells(1,i+1) = rs.Fields(i).Name
+Next
+
+'将记录集rs中的数据返回到工作表
+Sheets("演示").Range("A2").CopyFromRecordser rs
+
+'4、释放对象变量空间
+rs.Close: Set rs = Nothing
+con.Close: Set con = Nothing
+End Sub
+
+
+
+
+
