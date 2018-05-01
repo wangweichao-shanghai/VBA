@@ -51,6 +51,45 @@ con.Close: Set con = Nothing
 End Sub
 
 
-
-
+'将工作表数据返回数据库
+Sub 循环方式()
+  Dim cnn As ADODB.Connection
+  Dim rs As ADODB.Recordset
+  Dim myTable As String
+  
+  set cnn = New ADODB.Connection
+  With cnn
+    .Provider = "microsoft.ace.oledb.12.0"
+    .OpenThisWorkbook.Path & "\员工.accdb"
+  End With
+  myTable = "职工"
+  
+  Dim n As Integer,i As Integer,j As Integer,sql As String
+  n = Rang("A1").End(xlDown).Row  '记录当前工作表有效数据行数
+  For i = 2 To n
+    '检查是否已经存在某条记录
+    sql = "select * from" & myTable _
+        & " where 编号='" & Cell(i,1).Value & "'"
+    Set rs = New ADODB.Recordset
+    rs.Open sql,cnn,adOpenKeyset,adLockOptimistic
+    If rs.RecordCount = 0 Then
+      rs.AddNew
+      For j = 1 To rs.Fields.Count
+        rs.Fields(j-1) = Cells(i,j).Value
+      Next j
+      rs.Update
+    Else
+      For j = 1 To rs.Fields.Count
+        rs.Fields(j-1) = Cells(i,j).Value
+        Next j
+        rs.Update
+    End If
+ Next i
+ MsgBox "数据保存完毕"，vbInformation,"提示"
+ 
+ rs.Close
+ cnn.Close
+ Set rs = Nothing
+ Set cnn = Nothing
+End Sub
 
