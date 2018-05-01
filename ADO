@@ -1,0 +1,22 @@
+Sub    ADO操作数据库的一般步骤()
+  '1、我们现在用ADO工具，必须先根据这个图纸造出具体工具
+  '告诉电脑我们要用这个工具，先引用
+  '2、创建连接工具（对象）
+  Dim cnn = As ADODB.Connection
+  Set cnn = New ADODB.connection
+  '3、使用connection工具建立数据库的连接
+  With cnn
+    .Provider = "Microsoft.ACE.OLEDB.12.0"
+    .Open ThisWorkbook.Path & "\员工.accdb"
+  End With
+  '4、使用SQL命令对数据库进行操作
+  '4-1、书写SQL命令
+  Dim sql As String
+  sql = "update 职工 set 年龄=20 where 姓名='李小红'"
+  '4-2、执行SQL命令
+  cnn.Execute(sql)             '适用于没有返回值的情况
+  
+  '5、释放变量空间，关闭链接
+  cnn.Close                 '关闭链接
+  Set cnn = Nothing         '清空cnn变量
+End Sub
